@@ -22,7 +22,13 @@ class AppBoilerplate(Boilerplate):
     # Run Boilerplate initialisation
     super().__init__(self.framework)
   
+  # Module management shortcuts
+  def loadModule(self, module):
+    return self.framework.loadModule(module)
+  def getModule(self, module):
+    return self.framework.getModule(module)
 
+  # Interaction shortcut
   def ask(self, question, reference=None, suggestion=None):
     # If the framework interact module is loaded, use it since it.
     if hasattr(self.framework, 'interact'):
