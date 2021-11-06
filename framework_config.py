@@ -99,7 +99,7 @@ class Config(Boilerplate):
   #   @arguments None
   #   @returns None
   def setDefaultConfiguration(self) -> None:
-    self.storage['display_level'] = 5
+    self.storage['display_level'] = 4
     
   def parseDefaultConfiguration(self) -> None:
     self.framework.log.setDisplayLevel(self.get('display_level'))
