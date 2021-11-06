@@ -1,6 +1,21 @@
 # App method description
 This document contains the methods that can be used within an app.
 
+## Requirements
+In order to run, the app should have some perperations
+### System modules
+> import sys, os
+### Import framework 
+> sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../.framework/')
+> from boilerplate_app import AppBoilerplate as Boilerplate
+### Class inheritance
+> class app(Boilerplate):
+>   def __init__(self) -> None:
+>     super().__init__()
+
+
+
+
 ## Function: print()
 Adds content to the display buffer
 ### Arguments:
