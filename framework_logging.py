@@ -23,7 +23,7 @@ class Logging(Boilerplate):
     super().__init__(framework)
     # Prepare reference containers
     # Prepare configurable values
-    self.min_log_level = 5
+    self.min_log_level = 4
     self.max_buffer_size = 16
     # Prepare data containers
     self.buffer = []
