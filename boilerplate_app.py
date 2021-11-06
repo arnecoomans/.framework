@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import sys, os
-from pathlib import PosixPath
 
 # Ensure script is embedded and not called directly.
 if __name__ == "__main__":
