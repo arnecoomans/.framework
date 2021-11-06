@@ -4,4 +4,4 @@ This framework has been created to make it easier to use scripts for repetative 
 It combines often-used functions with modular functionality.
 
 # Documentation
-Functions are being documented in /doc
+Functions are being documented in [/doc](https://github.com/arnecoomans/.framework/tree/main/doc)
