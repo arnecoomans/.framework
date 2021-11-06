@@ -2,10 +2,17 @@
 This document contains the methods that can be used within an app.
 
 ## Function: print()
-Inherited from globally available function
+Adds content to the display buffer
+### Arguments:
+### Example:
+> app.print('Hello world!)
+Hello world!
+### Notes:
+Content is displayed when display level is set to 4 or higher. 
 
 
 ## Function: ask()
+Gets user input for a defined question.
 ### Arguments:
 - question (required)
 - reference (optional)
