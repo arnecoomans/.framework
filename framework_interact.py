@@ -30,7 +30,7 @@ class Interact(Boilerplate):
     # Normalisation
     # Make sure suggestion is a string or None
     if suggestion is not None:
-      if len(suggestion) > 0:
+      if len(str(suggestion)) > 0:
         suggestion = str(suggestion)
       else:
         suggestion = None
