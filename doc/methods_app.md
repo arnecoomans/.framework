@@ -17,13 +17,36 @@ In order to run, the app should have some perperations
 
 
 ## Function: print()
-Adds content to the display buffer
+Adds content to the display buffer showed when display level is set to 4 or higher. 
 ### Arguments:
 ### Example:
 > app.print('Hello world!)
 Hello world!
 ### Notes:
-Content is displayed when display level is set to 4 or higher. 
+### Maintained in: framework_logging
+
+## Function throw_error()
+Throws an error and stops application
+### Arguments:
+### Example:
+> app.throw_error('Cannot proceed')
+[! Error] Cannot proceed
+2021-11-07 22:39:24.22 Stopping application because of error.
+### Maintained in: framework_logging
+
+## Function throw_warning()
+Displays a warning when display level is set to 2 or higher (use -v)
+### Example:
+> app.throw_warning('Something happened')
+[w] Something happened
+### Maintained in: framework_logging
+
+## Function throw_notice()
+Displays a notice when display level is set to 3 or higher (use -vv)
+### Example:
+> app.throw_notice('Please look at this')
+[n] Please look at this
+
 
 
 ## Function: ask()
