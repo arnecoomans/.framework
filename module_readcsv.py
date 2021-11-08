@@ -22,20 +22,25 @@ class readcsv(Boilerplate):
     # Prepare reference containers
     # Prepare configurable values
     self.supportedSeperatorCharacters = [ '";"', '\';\'', 
-                                            '","', '\',\'', 
-                                            '"|"', '\'|\'',
-                                            "\"\t\"", "'\t'",
-                                            ';',
-                                            ',',
-                                            '|',
-                                            "\t",
-                                            ]
+                                          '","', '\',\'', 
+                                          '"|"', '\'|\'',
+                                          "\"\t\"", "'\t'",
+                                          ';',
+                                          ',',
+                                          '|',
+                                          "\t",
+                                          ]
     # Prepare data containers
 
   def read(self, source, header=False):
     # Ensure file is PosixPath object
     if type(source) is not PosixPath:
       file = Path(source)
+    # Verify that file exists
+    if not file.exists():
+      self.throw_error(['ReadCSV: Error when trying to read \'' + str(file) + '\'.', 'File does not exist.'])
+    elif not file.suffix in ['.csv', '.txt']:
+      self.throw_error(['ReadCSV: Error when trying to read \'' + str(file) + '\'.', 'File suffix \'' + file.suffix + '\' is not supported.'])
     # Open file
     self.debug('ReadCSV: Reading ' + str(source))
     with open(source) as f:
@@ -95,3 +100,4 @@ class readcsv(Boilerplate):
     for character in self.supportedSeperatorCharacters:
       if character in line:
         return character
+    self.throw_error(['ReadCSV: Error when detecting csv-delimiter. No character detected.', 'Supported characters are: ' + ', '.join(self.supportedSeperatorCharacters)])
