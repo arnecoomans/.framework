@@ -69,30 +69,32 @@ class readcsv(Boilerplate):
         index += 1
     # Process all lines in the read content
     for line in file_contents:
-      # Convert the line into a list based on the previously detected seperation character
-      line = line.strip().split(seperation_character)
-      # Add keys
-      indexed_line = {}
-      # Check if header should be used to store key: value
-      if header == False:
-        # Use column index as key
-        for column in line:
-          indexed_line = { line.index(column): column}
-      else:
-        # Find header name for column index
-        for column in line:
-          if len(column.strip()) > 0:
-            # Verivy that the column has a header
-            if line.index(column) in header:
-              indexed_line[header[line.index(column)]] = column.strip()
-            else:
-              indexed_line[line.index(column)] = column.strip()
-      # Make sure all keys are present in the result
-      for key in header:
-        if header[key] not in indexed_line:
-          indexed_line[header[key]] = ''
-      # Store the parsed result
-      result.append(indexed_line)
+      # Only process lines that actually have content
+      if len(line.replace(seperation_character, '')) > 0:
+        # Convert the line into a list based on the previously detected seperation character
+        line = line.strip().split(seperation_character)
+        # Add keys
+        indexed_line = {}
+        # Check if header should be used to store key: value
+        if header == False:
+          # Use column index as key
+          for column in line:
+            indexed_line = { line.index(column): column}
+        else:
+          # Find header name for column index
+          for column in line:
+            if len(column.strip()) > 0:
+              # Verivy that the column has a header
+              if line.index(column) in header:
+                indexed_line[header[line.index(column)]] = column.strip()
+              else:
+                indexed_line[line.index(column)] = column.strip()
+        # Make sure all keys are present in the result
+        for key in header:
+          if header[key] not in indexed_line:
+            indexed_line[header[key]] = ''
+        # Store the parsed result
+        result.append(indexed_line)
     # Return the parsed result
     return result
     
