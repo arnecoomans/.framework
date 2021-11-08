@@ -28,7 +28,10 @@ class AppBoilerplate(Boilerplate):
   def getModule(self, module):
     return self.framework.getModule(module)
 
-  # Interaction shortcut
+  # Interaction shortcuts
+  def getArgument(self, argument):
+    return self.framework.config.getArgument(argument=argument)
+    
   def ask(self, question, reference=None, suggestion=None):
     # If the framework interact module is loaded, use it since it.
     if hasattr(self.framework, 'interact'):
