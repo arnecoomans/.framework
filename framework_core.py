@@ -17,15 +17,17 @@ for location in importList:
 from framework_logging   import Logging   as Logging
 from framework_config    import Config    as Config
 from framework_interact  import Interact  as Interact
+from framework_files     import Files     as Files
 
 class Framework:
   def __init__(self) -> None:
     # Prepare Data Containers
     self.modules = {}
     # Load Core Extended Functionality
-    self.log     = Logging(self)
-    self.config  = Config(self)
+    self.log      = Logging(self)
+    self.config   = Config(self)
     self.interact = Interact(self)
+    self.files    = Files(self)
 
     self.log.debug(['Core is done with loading:', '* core;', '* logging;', '* configuration;', '* interaction.'])
     
