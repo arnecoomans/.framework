@@ -21,7 +21,7 @@ class CommonBoilerplate:
     self.framework = framework
 
   # Common availaibility to logging as core functionality
-  def log(self, content, level=None):
+  def log(self, content='', level=None):
     if hasattr(self.framework, 'log'):
       return self.framework.log.add(content=content, level=level)
     if type(content) is list:
@@ -49,7 +49,7 @@ class CommonBoilerplate:
       return self.framework.log.throw_notice(content)
     else:
       print('[! Notice] ' + str(content))
-  def print(self, content):
+  def print(self, content=''):
     if hasattr(self.framework, 'log'):
       return self.framework.log.add(content)
     else:
