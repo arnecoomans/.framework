@@ -22,6 +22,7 @@ class files(Boilerplate):
     pass
 
   def isPath(self, path=None):
+    self.throw_warning('The use of module_files:isPath is deprecated. Please use the core method')
     # Returns the given path is Pathlib.PosixPath.
     # If no path is supplied, get current working directory
     if path is None:
@@ -33,6 +34,7 @@ class files(Boilerplate):
       return path if type(path) is PosixPath else Path(path)
   
   def getMostRecent(self, path=None, filter=None, recursive=False):
+    self.throw_warning('The use of module_files:getMostRecent is deprecated. Please use the core method')
     path = self.isPath(path)
     # Normalize filter
     if filter == None or filter == False or len(filter) == 0:
