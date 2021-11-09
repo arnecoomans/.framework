@@ -25,7 +25,7 @@ class AppBoilerplate(Boilerplate):
   # Module management shortcuts
   def loadModule(self, module):
     return self.framework.loadModule(module)
-  def getModule(self, module):
+  def module(self, module):
     return self.framework.getModule(module)
 
   # Interaction shortcuts
