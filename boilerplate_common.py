@@ -67,3 +67,13 @@ class CommonBoilerplate:
   def get(self, key, prefix=[]):
     if hasattr(self.framework, 'config'):
       return self.framework.config.get(key=key, prefix=prefix)
+  
+  # Common availability to file and directory handling core functionality
+  def getFile(self, file=None, exists=False):
+    return self.framework.files.getFile(file=file, exists=exists)
+  def getPath(self, path=None):
+    return self.framework.files.getPath(path=path)
+  def getRecentFile(self, path, filter=None, recursive=False, method='modified'):
+    return self.framework.files.getRecentFile(path=path, filter=filter, recursive=recursive, method=method)
+  def pathExists(self, path):
+    return self.framework.files.pathExists(path=path)
