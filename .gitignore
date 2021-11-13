@@ -2,3 +2,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.pyc
+
+# Remove application configuration
+conf/*.yml
+cache/*
+
