@@ -15,7 +15,7 @@ importList = [os.path.dirname(os.path.abspath(__file__)),
 for location in importList:
   if location not in sys.path:
     sys.path.append(location)
-print(sys.path)
+
 from framework_logging   import Logging   as Logging
 from framework_config    import Config    as Config
 from framework_interact  import Interact  as Interact
