@@ -10,10 +10,12 @@ if __name__ == "__main__":
       sys.exit('[FATAL] Quitting. Do not call ' + os.path.basename(__file__) + ' directly.')
 
 # Add Local Shared Lib
-importList = [os.path.dirname(os.path.abspath(__file__))]
+importList = [os.path.dirname(os.path.abspath(__file__)),
+              os.path.dirname(os.path.abspath(__file__)) + '/modules/',]
 for location in importList:
   if location not in sys.path:
     sys.path.append(location)
+print(sys.path)
 from framework_logging   import Logging   as Logging
 from framework_config    import Config    as Config
 from framework_interact  import Interact  as Interact
@@ -44,7 +46,7 @@ class Framework:
       return self.modules[module]
     else:
       return None
-    pass
+  
   ### isModule
   #   @description verifies if a module is loaded
   #   @arguments module(string)
@@ -64,7 +66,7 @@ class Framework:
       return True
     else:
       # Verify that module exists
-      module_path = os.path.dirname(os.path.abspath(__file__)) + '/'
+      module_path = os.path.dirname(os.path.abspath(__file__)) + '/modules/'
       module_file = 'module_' + module.lower()
       if os.path.isfile(module_path + module_file + '.py'):
         #print('Module ' + module + ' exists, loading')
