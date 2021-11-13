@@ -103,3 +103,17 @@ class readcsv(Boilerplate):
       if character in line:
         return character
     self.throw_error(['ReadCSV: Error when detecting csv-delimiter. No character detected.', 'Supported characters are: ' + ', '.join(self.supportedSeperatorCharacters)])
+
+
+  def write(self, target=None, data=[], seperator=','):
+    if target == None:
+      self.throw_error('Data was sent to output file but no filename was specified')
+    self.debug(target)
+    self.flush()
+    target = self.getFile(target)
+    self.debug(target)
+    self.flush()
+    with open(target, 'w') as f:
+      for line in data:
+        f.write(seperator.join(line) + "\n")
+    f.close() 
