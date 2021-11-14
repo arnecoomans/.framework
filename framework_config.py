@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 # 
-# Framework Logging Core-Module
-# Adds bufferd output handling and filtering
+# Framework Configuration Core-Module
+# Process configuration within the application
 #
 import sys, os
-from argparse import ArgumentParser
+from argparse import ArgumentParser, SUPPRESS
+from pathlib import Path, PosixPath
 
 
 # Ensure script is embedded and not called directly.
@@ -17,193 +18,158 @@ for location in importList:
   if location not in sys.path:
     sys.path.append(location)
 from boilerplate_framework import FrameworkBoilerplate as Boilerplate
+# Non-standard module import
+# This module needs to be installed on the host system. If the module is not installed, give
+# installation instruction in the error message
+try:
+  import yaml
+except ImportError:
+  sys.exit('System module yaml not found. Please run pip3 install pyyaml.')
+
+
 
 class Config(Boilerplate):
   def __init__(self, framework) -> None:
     # Run Boilerplate initialisation
     super().__init__(framework)
     # Prepare reference containers
+    self.argument_parser = None
+    self.allow_overwrite = True
     # Prepare configurable values
-    self.default_value = None
-    self.key_seperator = '.'
-    self.argumentsetter = '-'
-    self.app_name = None
     
     # Prepare data containers
-    self.storage = {}
     self.arguments = {}
     # Initialisation
-    self.setDefaultConfiguration()
-    self.parseDefaultConfiguration()
-    self.arguments = self.getRuntimeArguments()
-    self.parseRuntimeArguments(self.arguments)
+    # Prepare argparse instance to receive argument definitions
+    self.prepareArgumentParser()
+    # Read application default configuration
+    self.loadArgConf('defaults')
     
-    # Development and debugging
-    self.debug('Core Module Config loaded')
-    #self.debug(self.arguments)
+  # All configuration is stored as runtime argument. The --config argument can be used
+  # to store arguments for re-use. 
+  # Commandline supplied arguments override the --config file supplied arguments
 
-  ##  Access Functions
-  ### set
-  #   @description stores key and value pais in the configuration storage container.
-  #                Keys can be multi-level and are seperated by a .-character.
-  #   @arguments key (string)
-  #              value (string|list|dict|boolean|integer)
-  #              prefix (list)
-  #   @returns boolean
-  def set(self, key, value=None, prefix=[]):
-    # Ensure default value is used
-    if value == None:
-      value = self.default_value
-    # Ensure prefix is a list
-    if not type(prefix) is list:
-      prefix = [str(prefix)]
-    # If the stored value is a dict, it should be recursively processed
-    if type(value) is dict:
-      for subkey, subvalue in value.items():
-        self.set(subkey, subvalue, prefix + [key])
-    # Store the (key prefix,) key and value
+  #   Argument Access
+  def setArgument(self, key, value, overwrite=False):
+    # Key Normalisation
+    key = str(key).lower()
+    # Value normalisation
+    if type(value) == str:
+      if value.lower() == 'true':
+        value = True
+      elif value.lower() == 'false':
+        value = False
+      elif value.lower() == 'none':
+        value = None
+    # Check overwrite
+    if not overwrite is True:
+      if key in self.arguments:
+        return False
+    self.arguments[key] = value
+    return True
+
+  def getArgument(self, key):
+    # Key Normalisation
+    key = str(key).lower()
+    if key in self.arguments:
+      return self.arguments[key]
     else:
-      if type(value) == str:
-        value = value.strip()
-      self.storage[self.key_seperator.join(prefix + [key]).lower()] = value
-      return True
-  ### get
-  #   @description get value for key from configuration storage container
-  #   @arguments key (string)
-  #              prefix (list)
-  #   @returns value (string|list|dict|boolean|integer)
-  def get(self, key, prefix=[]):
-    # Ensure key is in lowercase
-    key = key.lower()
-    # First ensure that prefix is a list.
-    if type(prefix) is not list:
-      prefix = [prefix]
-    # if no prefix is supplied, try for an exact match
-    if len(prefix) == 0:
-      if key in self.storage:
-        return self.storage[key]
-      else:
-        return self.default_value
-    else:
-      # A prefix is supplied.
-      # Check if prefixed key exists
-      if self.key_seperator.join(prefix + [key]).lower() in self.storage:
-        return self.get(self.key_seperator.join(prefix + [key]))
-    return self.default_value
+      return None
+
+
+
+
+  #   Runtime arguments
+  #   Runtime arguments are passed to the application behind the execution command.  
+  #   Example:
+  #   $ application.py --key: value
+  #
+  ## read command line arguments
+  def prepareArgumentParser(self):
+    # Use ArgParse to read arguments, since the arguments can only be read during initialisation
+    self.argument_parser = ArgumentParser()
+    # Prepare system default argument definitions
+    self.argument_parser.add_argument('--config', 
+                                      help='Load arguments from configuration template.',
+                                      nargs='?',    # Allow 0 or more arguments
+                                      const=True,   # When no argument is supplied, use const
+                                      type=Path     # Ensure type or supplied argument is Path
+                                      )
+    self.argument_parser.add_argument('--verbose', '-v', 
+                                      help='Set verbosity (1-5)',
+                                      action='count',
+                                      default=None
+                                      )
+    self.argument_parser.add_argument('--debug',
+                                      #help='Debugging shortcut for verbosity',
+                                      action='store_true',
+                                      default=None,
+                                      help=SUPPRESS
+                                      )
+    self.argument_parser.add_argument('--source', '-s', 
+                                      help='Set source file or path',
+                                      action='store',
+                                      const=None,
+                                      type=Path,
+                                      )
+    self.argument_parser.add_argument('--destination', '-d', 
+                                      help='Set destination file or path',
+                                      action='store',
+                                      const=None,
+                                      type=Path,
+                                      )
+    
+    
   
-
-  #   Default configuration
-  ### Set default configuration
-  #   @description Stores some default configuration values in the storage container that are expected
-  #                for the core framework to function.
-  #   @arguments None
-  #   @returns None
-  def setDefaultConfiguration(self) -> None:
-    self.storage['display_level'] = 4
-    
-  def parseDefaultConfiguration(self) -> None:
-    self.framework.log.setDisplayLevel(self.get('display_level'))
-
-
-
-  #   Argument parsing
-  ### get_app_name
-  #   @description Gets application name from filename
-  #   @arguments None
-  #   @returns (string)
-  def get_app_name(self):
-    return sys.argv[0]
   
-  ### parse_runtime_arguments
-  #   @description Reads runtime arguments and stores these. 
-  #                Processes some special arguments but does not require arguments to 
-  #                be pre-defined. This allows for the best flexibility.
-  #                Argparse requires the arguments to be pre-defined and that is less
-  #                flexible.
-  #                Stores the arguments in the self.arguments data container
-  #   @arguments None
-  #   @returns self.
-  def getRuntimeArguments(self):
-    # Prepare result placeholder
-    arguments = { 
-      'files': [], 
-      }
-    # Process arguments
-    # Arguments are stored by python in sys.argv. Sys.argv[0] is the current filename and 
-    # is not relevant for argument processing. Start with [1:]
-    # Loop through each argument.
-    # Use count method in stead of a simple for loop. This allows to use the following 
-    # argument as value for a set key.
-    # Setter arguments mostly look fancy but rarely add functionality. Repeating the same character
-    # after a setter character results in the character as key and the number of repeats as value. 
-    count = 1
-    while count < len(sys.argv):
-      argument = sys.argv[count]
-      # Detect setter argument (starts with - (character is configured in argumentsetter))
-      if argument[:1] == self.argumentsetter or \
-         argument[:2] == self.argumentsetter*2:
-        # Argument setter is detected
-        # Remove argument setter character
-        while argument[:1] == self.argumentsetter:
-          argument = argument[1:]
-        # First, detect repeating character
-        if argument == argument[:1]*len(argument):
-          # If a repeating character is detected, the character should be stored as key and the 
-          # character count should be stored as value.
-          arguments[argument[:1]] = len(argument)
-          count += 1
-          continue
-      # Detect if the argument is followed by a value
-      # This can be the same for a setter argument or a normal argument
-      if argument[-1:] == ':' or \
-          argument[-1:] == '=':
-        # The following arugment should be seen as value
-        argument = argument[:-1]
-        # Use count to get the following argument as value. This also skips the following argument
-        # for regular processing.
-        count += 1
-        arguments[argument] = sys.argv[count]
-      # Detect if the setter contains a value
-      elif ':' in argument:
-        argument = argument.split(':')
-        arguments[argument[0].lower()] = argument[1]
-      elif '=' in argument:
-        argument = argument.split('=')
-        arguments[argument[0].lower()] = argument[1]
-      # Argument could be a file
-      elif os.path.isfile(argument):
-        arguments['files'].append(argument)
-      # Assume the value is True
+  def parseArgumentParser(self):
+    arguments = self.argument_parser.parse_args()
+    ##  Normalize known arguments
+    ### Verbosity should be between 1 and 5
+    if arguments.verbose is not None:
+      arguments.verbose = 1 if arguments.verbose < 1 else arguments.verbose
+      arguments.verbose = 5 if arguments.verbose > 5 else arguments.verbose
+    ### Configuration template file handling
+    if arguments.config is not None:
+      if arguments.config is True:
+        # If appname.py --config is used, the config file app_appname.yml should be loaded.
+        # Feed app_appname.
+        self.loadArgConf(file=Path('app_' + self.framework.getAppName()))
       else:
-        arguments[argument.lower()] = True
-      # Increase key count to process next argument
-      count += 1
-    # Return parsed arguments
-    return arguments
+        # If a configuration template is supplied, the config file custom_template should be
+        # used.
+        self.loadArgConf(file=arguments.config.with_name('custom_' + arguments.config.name))
+    for argument in vars(arguments):
+      self.setArgument(key=argument, value=getattr(arguments, argument))
 
-
-  def getArgument(self, argument):
-    argument = argument.lower()
-    if argument in self.arguments:
-      return self.arguments[argument]
-    elif argument in self.arguments['files']:
-      return self.arguments['files'][argument]
-    else:
-      return None 
-
-  def parseRuntimeArguments(self, arguments):
-    # Use -v*[1-4] to set verbosity. Sets display level between 2 and 5
-    # Verbosity level 1 is default and cannot be removed - errors are always displayed. That is why 
-    # -v starts with 2. 
-    if type(self.getArgument('v')) is int:
-      self.framework.log.setDisplayLevel(self.getArgument('v')+1)
-    elif self.getArgument('verbose') is True:
-      self.framework.log.setDisplayLevel(5)
-    elif self.getArgument('verbose') in ['1', '2', '3', '4', '5']:
-      self.framework.log.setDisplayLevel(int(self.getArgument('verbose')))
-      
+  def loadArgConf(self, file=None):
+    # Handle file=bool
+    if file is True:
+      file = Path('app_' + self.framework.getAppName())
+    # Ensure File is PosixPath
+    file = file if type(file) is PosixPath else Path(file)
+    # Fetch basedir
+    base = self.framework.getCorePath() / 'conf/'
+    file = base / file.with_suffix('.yml')
+    # Check if file exists
+    if file.exists():
+      # Since we we know the file exists, import it.
+      self.debug('Reading configuration from \'' + str(file.with_suffix('.yml').name) + '\'.')
+      self.readArgConf(file=base / file.with_suffix('.yml'))
     
-        
-          
-    
-    
+  def readArgConf(self, file):
+    # Ensure File is PosixPath
+    file = file if type(file) is PosixPath else Path(file)
+    if not file.exists():
+      self.throw_error(['Config:readArgConf -- Error when reading file:', str(file)])
+    # File exists. Load into argument placeholder
+    with open(file) as configuration_file:
+      # Read configuration file
+      configuration = yaml.full_load(configuration_file)
+      # Check if configuration file is not none
+      if configuration is not None:
+        # Store configuration keys in argument storage
+        for key in configuration:
+          self.setArgument(key=key, value=configuration[key], overwrite=self.allow_overwrite)
+          if key == 'persistance':
+            self.allow_overwrite = configuration[key] if type(key) == bool else False
