@@ -23,7 +23,7 @@ class Logging(Boilerplate):
     super().__init__(framework)
     # Prepare reference containers
     # Prepare configurable values
-    self.min_log_level = 4
+    self.min_log_level = 2
     self.max_buffer_size = 16
     # Prepare data containers
     self.buffer = []
@@ -68,11 +68,11 @@ class Logging(Boilerplate):
     self.add(content, 1)
     self.flush()
     sys.exit(str(datetime.now())[:-4] + ' Stopping application because of error.')
-  def throw_warning(self, content):
-    self.add(content, 2)
-  def throw_notice(self, content):
-    self.add(content, 3)
   def print(self, content):
+    self.add(content, 2)
+  def throw_warning(self, content):
+    self.add(content, 3)
+  def throw_notice(self, content):
     self.add(content, 4)
   def debug(self, content):
     self.add(content, 5)
@@ -141,9 +141,9 @@ class Logging(Boilerplate):
     pre = ''
     if line['level'] == 1:
       pre = '[! Error] '
-    elif line['level'] == 2:
-      pre = '[w] '
     elif line['level'] == 3:
+      pre = '[w] '
+    elif line['level'] == 4:
       pre = '[n] '
     elif line['level'] == 5:
       pre = str(line['datetime'])[:-4] + ' '

@@ -44,6 +44,7 @@ class Config(Boilerplate):
     self.prepareArgumentParser()
     # Read application default configuration
     self.loadArgConf('defaults')
+    self.handleSpecialArguments()
     
   # All configuration is stored as runtime argument. The --config argument can be used
   # to store arguments for re-use. 
@@ -95,11 +96,18 @@ class Config(Boilerplate):
                                       const=True,   # When no argument is supplied, use const
                                       type=Path     # Ensure type or supplied argument is Path
                                       )
-    self.argument_parser.add_argument('--verbose', '-v', 
+    self.argument_parser.add_argument('--verbose',
                                       help='Set verbosity (1-5)',
+                                      action='store',
+                                      type=int,
+                                      default=None
+                                      )
+    self.argument_parser.add_argument('-v',
+                                      help=SUPPRESS,
                                       action='count',
                                       default=None
                                       )
+    
     self.argument_parser.add_argument('--debug',
                                       #help='Debugging shortcut for verbosity',
                                       action='store_true',
@@ -118,9 +126,6 @@ class Config(Boilerplate):
                                       const=None,
                                       type=Path,
                                       )
-    
-    
-  
   
   def parseArgumentParser(self):
     arguments = self.argument_parser.parse_args()
@@ -129,18 +134,29 @@ class Config(Boilerplate):
     if arguments.verbose is not None:
       arguments.verbose = 1 if arguments.verbose < 1 else arguments.verbose
       arguments.verbose = 5 if arguments.verbose > 5 else arguments.verbose
+    
+    for argument in vars(arguments):
+      self.setArgument(key=argument, value=getattr(arguments, argument))
+    # Process special arguments
+    self.handleSpecialArguments()
+  
+  def handleSpecialArguments(self):
     ### Configuration template file handling
-    if arguments.config is not None:
-      if arguments.config is True:
+    if self.getArgument('config') is not None:
+      if self.getArgument('config') is True:
         # If appname.py --config is used, the config file app_appname.yml should be loaded.
         # Feed app_appname.
         self.loadArgConf(file=Path('app_' + self.framework.getAppName()))
       else:
         # If a configuration template is supplied, the config file custom_template should be
         # used.
-        self.loadArgConf(file=arguments.config.with_name('custom_' + arguments.config.name))
-    for argument in vars(arguments):
-      self.setArgument(key=argument, value=getattr(arguments, argument))
+        self.loadArgConf(file=self.getArgument('config').with_name('custom_' + self.getArgument('config').name))
+        self.setArgument('config', None)
+    # Verbosity
+    if type(self.getArgument('v')) is int:
+      self.framework.log.setDisplayLevel(self.getArgument('v'))
+    if type(self.getArgument('verbose')) is int:
+      self.framework.log.setDisplayLevel(self.getArgument('verbose'))
 
   def loadArgConf(self, file=None):
     # Handle file=bool

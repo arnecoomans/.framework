@@ -51,7 +51,7 @@ class CommonBoilerplate:
       print('[! Notice] ' + str(content))
   def print(self, content=''):
     if hasattr(self.framework, 'log'):
-      return self.framework.log.add(content)
+      return self.framework.log.print(content)
     else:
       print(str(content))
   def debug(self, content):
