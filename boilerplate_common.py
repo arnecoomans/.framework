@@ -61,12 +61,8 @@ class CommonBoilerplate:
       print('[! Debug] ' + str(content))
   
   # Common availaibility to configuration as core functionality
-  def set(self, key, value=None, prefix=[]):
-    if hasattr(self.framework, 'config'):
-      return self.framework.config.set(key=key, value=value, prefix=prefix)
-  def get(self, key, prefix=[]):
-    if hasattr(self.framework, 'config'):
-      return self.framework.config.get(key=key, prefix=prefix)
+  def getArgument(self, argument):
+    return self.framework.config.getArgument(argument=argument)
   
   # Common availability to file and directory handling core functionality
   def getFile(self, file=None, exists=False):
