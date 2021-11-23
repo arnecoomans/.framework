@@ -61,8 +61,8 @@ class CommonBoilerplate:
       print('[! Debug] ' + str(content))
   
   # Common availaibility to configuration as core functionality
-  def getArgument(self, argument):
-    return self.framework.config.getArgument(argument=argument)
+  def getArgument(self, key):
+    return self.framework.config.getArgument(key=key)
   
   # Common availability to file and directory handling core functionality
   def getFile(self, file=None, exists=False):
