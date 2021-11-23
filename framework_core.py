@@ -36,13 +36,13 @@ class Framework:
     
 
     # Core Configuration Shortcuts
-    self.core_path = self.files.getPath(os.path.dirname(os.path.abspath(__file__)))
-    self.app_name = self.getAppName()
+    #self.core_path = self.files.getPath(os.path.dirname(os.path.abspath(__file__)))
+    #self.app_name = self.getAppName()
     #self.log.print(self.app_name)
 
     # Initialisation
     self.config.parseArgumentParser()
-
+    self.log.logFileInit()
     self.log.debug(['Core is done with loading:', '* core;', '* logging;', '* configuration;', '* interaction.'])
     
     
