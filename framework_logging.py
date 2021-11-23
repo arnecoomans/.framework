@@ -29,8 +29,8 @@ class Logging(Boilerplate):
     self.buffer = []
     # Development and debugging
     #self.debug('Core Module Logging loaded')
-    
-  
+
+
   ##  Log Buffer
   ### Add
   #   @description adds content to the log buffer, addes log-level and date/time
@@ -44,7 +44,8 @@ class Logging(Boilerplate):
     # Add normalized content to buffer
     self.buffer.append( { 'content': content,
                           'level': level,
-                          'datetime': datetime.now()
+                          'datetime': datetime.now() # Use datetime and not framework date module 
+                                                     # because timing keeps changing.
                         } )
     if len(self.buffer) > self.max_buffer_size:
       self.flush()
