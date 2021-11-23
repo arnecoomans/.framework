@@ -181,6 +181,9 @@ class Config(Boilerplate):
       self.framework.log.setDisplayLevel(self.getArgument('v'))
     if type(self.getArgument('verbose')) is int:
       self.framework.log.setDisplayLevel(self.getArgument('verbose'))
+    if self.getArgument('debug') == True:
+      self.debug('Setting debug display mode.')
+      self.framework.log.setDisplayLevel(5)
 
   def loadArgConf(self, file=None):
     # Handle file=bool
