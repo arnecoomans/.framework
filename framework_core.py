@@ -20,6 +20,7 @@ from framework_logging   import Logging   as Logging
 from framework_config    import Config    as Config
 from framework_interact  import Interact  as Interact
 from framework_files     import Files     as Files
+from framework_date      import Date      as Date
 
 class Framework:
   def __init__(self) -> None:
@@ -30,6 +31,7 @@ class Framework:
     self.files    = Files(self)
     self.config   = Config(self)
     self.interact = Interact(self)
+    self.date     = Date(self)
     
     
 
