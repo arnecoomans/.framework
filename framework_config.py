@@ -90,30 +90,54 @@ class Config(Boilerplate):
     # Use ArgParse to read arguments, since the arguments can only be read during initialisation
     self.argument_parser = ArgumentParser()
     # Prepare system default argument definitions
+    ##  Configuration loading
+    #   Use --config <optional: filename> to add a configuration shortcut file to loading
     self.argument_parser.add_argument('--config', 
-                                      help='Load arguments from configuration template.',
+                                      help='Load arguments from configuration template. ' + 
+                                           'Leave empty to load ' + self.framework.getAppName() + '-template.',
                                       nargs='?',    # Allow 0 or more arguments
                                       const=True,   # When no argument is supplied, use const
                                       type=Path     # Ensure type or supplied argument is Path
                                       )
+    ##  Logging and display level
+    #   Arguments used in logging and setting display level
     self.argument_parser.add_argument('--verbose',
-                                      help='Set verbosity (1-5)',
+                                      help='Set verbosity (1-5). Use 1 for errors only, 2 for normal operation.', # Minimal level is 1 since errors should always show. 
                                       action='store',
                                       type=int,
                                       default=None
                                       )
     self.argument_parser.add_argument('-v',
-                                      help=SUPPRESS,
+                                      help=SUPPRESS, # It is possible to use -vvvvv to influence verbosity, but --help documentation
+                                                     # should only show one verbosity argument.
                                       action='count',
                                       default=None
                                       )
-    
     self.argument_parser.add_argument('--debug',
                                       #help='Debugging shortcut for verbosity',
                                       action='store_true',
                                       default=None,
-                                      help=SUPPRESS
+                                      help=SUPPRESS # Use --debug as shortcut for "--verbose 5", but --help documentation should only show
+                                                    # one verbosity argument.
                                       )
+    self.argument_parser.add_argument('--logfile',  # Specify if log entries should also be shared to a file as well as to display.
+                                      help='Specify if a logfile should be used.',
+                                      nargs='?',    # Allow 0 or more arguments
+                                      const=True,   # When no argument is supplied, use const
+                                      type=Path     # Ensure type or supplied argument is Path
+                                      )
+    self.argument_parser.add_argument('--logfile-verbose',
+                                      help='Set verbosity of logfile (1-5). Use 0 for content only',
+                                      action='store',
+                                      type=int,
+                                      default=None
+                                      )
+    self.argument_parser.add_argument('--logfile-append',
+                                      help='Append log to existing file.',
+                                      action='store_true',
+                                      default=False,
+                                      )
+    ##  Often-used arguments are available by default
     self.argument_parser.add_argument('--source', '-s', 
                                       help='Set source file or path',
                                       action='store',
