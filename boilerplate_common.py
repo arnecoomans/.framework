@@ -73,3 +73,11 @@ class CommonBoilerplate:
     return self.framework.files.getRecentFile(path=path, filter=filter, recursive=recursive, method=method)
   def pathExists(self, path):
     return self.framework.files.pathExists(path=path)
+
+  # Date functions
+  def getDate(self, format='%Y-%m-%d'):
+    return self.framework.date.getDate(format=format)
+  def getTime(self, format='%H:%M:%S'):
+    return self.framework.date.getTime(format=format)
+  def getDateTime(self):
+    return self.framework.date.getDateTime()

@@ -66,7 +66,8 @@ class Config(Boilerplate):
     if not overwrite is True:
       if key in self.arguments:
         return False
-    self.arguments[key] = value
+    if not value is None:
+      self.arguments[key] = value
     return True
 
   def getArgument(self, key):

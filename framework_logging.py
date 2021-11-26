@@ -22,13 +22,44 @@ class Logging(Boilerplate):
     # Run Boilerplate initialisation
     super().__init__(framework)
     # Prepare reference containers
+    self.logfile_target = None
+    self.logfile_suffix = '.log'
     # Prepare configurable values
     self.min_log_level = 2
-    self.max_buffer_size = 16
+    self.min_logfile_level = 4
+    self.max_display_buffer_size = 16
     # Prepare data containers
-    self.buffer = []
+    self.buffer = []        # For pushing to screen
+    self.print_buffer = []  # For pushing to file
     # Development and debugging
-    #self.debug('Core Module Logging loaded')
+  
+  # Log file initialisation
+  def logFileInit(self):
+    # Check if logging to file should be enabled.
+    if self.getArgument('logfile'):
+      # Log file is enabled
+      # Set logfile target
+      self.setLogFileTarget(target=self.getArgument('logfile'))
+      # Set logfile display level
+      if not self.getArgument('logfile-verbose') is None:
+        self.setLogFileVerbose(self, level=self.getArgument('logfile-verbose'))
+  
+  #   Log file functions
+  def setLogFileTarget(self, target):
+    # If no filename is supplied, assume default format of log file name
+    if target == True:
+      target = self.getFile(self.getDate() + '-' + self.framework.getAppName())
+    else:
+      # Log file name is supplied
+      target = self.getFile(target)
+    # Use suffix if supplied, else add locally configured default
+    # Store target in local storage
+    self.logfile_target = target if len(target.suffixes) > 0 else target.with_suffix(self.logfile_suffix)
+    # Log intended file usage.
+    self.throw_notice('Log to file: Logging to: \'' + str(self.logfile_target.name) + '\'.')
+
+  def setLogFileVerbose(self, level):
+    pass
 
 
   ##  Log Buffer
@@ -47,7 +78,7 @@ class Logging(Boilerplate):
                           'datetime': datetime.now() # Use datetime and not framework date module 
                                                      # because timing keeps changing.
                         } )
-    if len(self.buffer) > self.max_buffer_size:
+    if len(self.buffer) > self.max_display_buffer_size:
       self.flush()
     return True
   
