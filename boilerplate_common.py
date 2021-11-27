@@ -5,7 +5,7 @@
 # Holds shortcuts available to any app, module or core module
 # @author     Arne Coomans
 # @version    0.0.1
-# @url        https://github.com/arnecoomans/.framework/
+# @url        https://github.com/cmns-nl/.framework/
 # 
 
 # Import system python modules
