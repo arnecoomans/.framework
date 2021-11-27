@@ -54,7 +54,7 @@ class Files(Boilerplate):
       return None
     return file
 
-  def getRecentFile(self, path, filter=None, recursive=False, method='modified'):
+  def getRecentFile(self, path=None, filter=None, recursive=False, method='modified'):
     # Normalize Path
     path = self.getPath(path)
     # Normalize method
@@ -77,15 +77,21 @@ class Files(Boilerplate):
       filter = '**/' + filter
     # Find the most recent file with filter in directory
     if method == 'c':
-      return max(
+      try:
+        return max(
           list(path.glob(filter)),
           key=os.path.getctime # Use getctime for recentlt created, getmtime for recently modified
         )
+      except ValueError:
+        return None
     else:
-      return max(
+      try:
+        return max(
           list(path.glob(filter)),
           key=os.path.getmtime # Use getctime for recentlt created, getmtime for recently modified
         )
+      except ValueError:
+        return None
 
   def fileExists(self, file):
     pass

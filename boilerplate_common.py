@@ -119,7 +119,7 @@ class CommonBoilerplate:
   #                  Use filter to filter files by extention (include .)
   #                  Use recursive to search in path and subdirectories of path
   #                  Method supports created or modified as sorting method
-  def getRecentFile(self, path, filter=None, recursive=False, method='modified'):
+  def getRecentFile(self, path=None, filter=None, recursive=False, method='modified'):
     return self.framework.files.getRecentFile(path=path, filter=filter, recursive=recursive, method=method)
   
   ##  Date and time functions
