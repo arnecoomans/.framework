@@ -20,14 +20,4 @@ class FrameworkBoilerplate(Boilerplate):
   def __init__(self, framework, frameworkmodulename='') -> None:
     super().__init__(framework)
     self.frameworkmodulename = frameworkmodulename
-    
-  def log(self, content, level=None):
-    if hasattr(self.framework, 'log'):
-      return self.framework.log.add(content=content, level=level)
-    # For framework messages; only print notice, warning and error messages.
-    elif int(level) <= 3:
-      if type(content) is list:
-        for line in content:
-          print(line)
-      else:
-        print(content)
+  
