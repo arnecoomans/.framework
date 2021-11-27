@@ -18,13 +18,13 @@ with some basic error handling built in.
 ## Installation
 Install the .framework into a convenient location for you. 
 ```
-$ git clone https://github.com/arnecoomans/.framework (location)
+$ git clone https://github.com/cmns-nl/.framework (location)
 ```
 For example, to store the framework in a folder called python-apps, use
 ```
 $ mkdir python-apps
 $ cd python-apps
-$ git clone https://github.com/arnecoomans/.framework .
+$ git clone https://github.com/cmns-nl/.framework .
 ```
 ### Updating
 With a framework installed, go to the .framework directory and use
