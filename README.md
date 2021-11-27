@@ -95,6 +95,7 @@ the __init__ process of an application.
 #### General available configuration
 - --source For use in app or module
 - --destination For use in app or module
+- --yes|-y Accept suggestions in interaction
 
 ### Static configuration
 In the .framework/conf directory, static configuration can be placed.
