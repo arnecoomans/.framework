@@ -58,8 +58,8 @@ class Interact(Boilerplate):
         return answer
     # Answer is not already given.
     # Asking a question requires that content is displayed. Display level should be at least 4
-    if self.framework.log.min_log_level < 4:
-      self.framework.log.setDisplayLevel(5)
+    if self.framework.log.min_log_level == 1:
+      self.framework.log.setDisplayLevel(2)
       # Make sure there's no content buffer left !!
       self.flush()
     # Display question and request input for answer
