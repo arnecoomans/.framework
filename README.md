@@ -3,6 +3,12 @@
 The .framework creates a starting point to create maintainable and functioning scripts 
 with some basic error handling built in. 
 
+## Table of contents
+- [Key Features](#key-features)
+- [Installation](#installation)
+- [Using in an application](#using-in-an-application)
+- [Configuration](#configuration)
+
 ## Key features
 - Choose to display Errors, Warnings, Notice and Debugging information
 - Layered configuration via command line arguments or configuration files
@@ -20,12 +26,12 @@ $ mkdir python-apps
 $ cd python-apps
 $ git clone https://github.com/arnecoomans/.framework .
 ```
-## Updating
+### Updating
 With a framework installed, go to the .framework directory and use
 ```
 $ git pull
 ```
-## Requirements
+### Requirements
 The .framework requires python 3.
 
 The following python modules should be present.
