@@ -26,25 +26,20 @@ class Framework:
   def __init__(self) -> None:
     # Prepare Data Containers
     self.modules = {}
+    self.core_module_names = []
+
     # Load Core Extended Functionality
     self.log      = Logging(self)
     self.files    = Files(self)
     self.config   = Config(self)
     self.interact = Interact(self)
     self.date     = Date(self)
-    
-    
-
-    # Core Configuration Shortcuts
-    #self.core_path = self.files.getPath(os.path.dirname(os.path.abspath(__file__)))
-    #self.app_name = self.getAppName()
-    #self.log.print(self.app_name)
-
+  
+  def run(self):
     # Initialisation
     self.config.parseArgumentParser()
     self.log.logFileInit()
-    self.log.debug(['Core is done with loading:', '* core;', '* logging;', '* configuration;', '* interaction.'])
-    
+    self.log.debug(['Loaded .framework core with following modules: ', ', '.join(self.core_module_names)])
     
   ## Context management
   def getAppName(self):
