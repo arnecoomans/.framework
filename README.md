@@ -70,3 +70,29 @@ class app(Boilerplate):
 app = app()
 ```
 
+## Configuration
+Configuration is passed to the application using command line directives. Some basic
+directives are built-in. New directives can be passed to the application during 
+the __init__ process of an application.
+
+### Runtime configuration
+#### Static configuration
+- --config [optional: file-reference] Load static configuration file
+#### Verbosity
+- --verbose [1-5] Sets display level in buffered output
+- --debug Shortcut to --verbose 5
+- -v -> -vvvv Increase verbosity from 2 to 5
+#### Log to file
+- --logfile [optional: file-reference] Also write log buffer to file output
+- --logfile-verbose [0-5] Set display level in logfile output
+- --logfile-append Set logfile write mode to append in stead of overwrite
+#### General available configuration
+- --source For use in app or module
+- --destination For use in app or module
+
+### Static configuration
+In the .framework/conf directory, static configuration can be placed.
+- defaults.yml is always loaded by the application.
+- app_{app-name}.yml is loaded when the --config directive is passed.
+- custom_{name}.yml is loaded when the --config {name} directive is passed.
+
