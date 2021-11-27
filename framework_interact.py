@@ -41,6 +41,9 @@ class Interact(Boilerplate):
     display_question = '' + str(question)
     if suggestion is not None:
       display_question += ' (\'' + suggestion + '\')'
+      if self.getArgument('yes') == True:
+        self.print(display_question + ': ' + str(suggestion) + ' (accepted suggestion)' )
+        return suggestion
     display_question += ': '
     #
     # Check if question reference is answered in command line arguments
@@ -50,7 +53,7 @@ class Interact(Boilerplate):
       if self.framework.config.getArgument(reference):
         answer = self.framework.config.getArgument(reference)
         # Send answer to display as content (as if it were a question that has been answered)
-        self.print(display_question + str(answer) + ' (from command line argument)')
+        self.print(display_question + str(answer) + ' (accepted suggestion)')
         # Return the answer and stop processing
         return answer
     # Answer is not already given.
