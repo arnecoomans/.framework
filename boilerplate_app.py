@@ -33,6 +33,9 @@ class AppBoilerplate(Boilerplate):
     super().__init__(self.framework)
 
   #   Shortcuts available to apps
+  ## Core functions
+  def run(self):
+    return self.framework.run()
     
   ##  Module management shortcuts
   ### loadModule
