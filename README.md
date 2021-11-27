@@ -24,7 +24,8 @@ For example, to store the framework in a folder called python-apps, use
 ```
 $ mkdir python-apps
 $ cd python-apps
-$ git clone https://github.com/cmns-nl/.framework .
+$ mkdir .framework
+$ git clone https://github.com/cmns-nl/.framework .framework/
 ```
 ### Updating
 With a framework installed, go to the .framework directory and use
