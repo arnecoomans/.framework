@@ -151,6 +151,12 @@ class Config(Boilerplate):
                                       const=None,
                                       type=Path,
                                       )
+    self.argument_parser.add_argument('--yes', '-y', 
+                                      help='Automatically accept suggestions',
+                                      action='store_true',
+                                      default=False,
+                                      )
+                                      
   
   def parseArgumentParser(self):
     arguments = self.argument_parser.parse_args()
