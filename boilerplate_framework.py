@@ -17,7 +17,9 @@ from boilerplate_common import CommonBoilerplate as Boilerplate
 #from framework_core import Framework
 
 class FrameworkBoilerplate(Boilerplate):
-  def __init__(self, framework, frameworkmodulename='') -> None:
+  def __init__(self, framework) -> None:
     super().__init__(framework)
-    self.frameworkmodulename = frameworkmodulename
+    # Store Class name in framework.core_module_names to generate list of loaded modules
+    self.framework.core_module_names.append(type(self).__name__)
+
   
