@@ -145,3 +145,10 @@ class CommonBoilerplate:
   #                  For format options, see https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior
   def getDateTime(self):
     return self.framework.date.getDateTime()
+  
+  ##  Argument Functions
+  ### getArgumentParser()
+  #   @returns       Argparse instance
+  #   @description   Retuns the argparse instance so add_argument can be applied
+  def getArgumentParser(self):
+    return self.framework.config.argument_parser
