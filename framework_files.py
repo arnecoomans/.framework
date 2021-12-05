@@ -3,6 +3,7 @@
 # Framework Logging Core-Module
 # Adds bufferd output handling and filtering
 #
+import posixpath
 import sys, os
 from pathlib import Path, PosixPath
 
@@ -44,17 +45,60 @@ class Files(Boilerplate):
 
   def getFile(self, file=None, exists=False):
     if file == None or file == '':
-      self.throw_error(['Error when converting filename to file in path-object in files:getFile(). No filename supplied.'])
+      self.throw_error(['Files.getFile: Error when converting filename to file in path-object in files:getFile(). No filename supplied.'])
     elif type(file) is not PosixPath:
       file = Path(file)
     if not file.is_absolute():
       file = Path.cwd() / file
     if exists == True and not file.is_file():
-      self.throw_warning(['Files.getFile(): File reference supplied is not a file:', '- ' + str(file)])
+      self.throw_warning(['Files.getFile: File reference supplied is not a file:', '- ' + str(file)])
       return None
     return file
+  
 
-  def getRecentFile(self, path=None, filter=None, recursive=False, method='modified'):
+  # getRecentFileIn()
+  # Returns suggestion if file exists
+  # 
+  # 
+  def getRecentFileIn(self, path=None,
+                            filter=None, recursive=False, method='modified'):
+    # Normalize Path
+    # If Path is None, False or empty, get default path object
+    if path is None or path is False or len(str(path).strip()) == 0:
+      path = self.getPath()
+    # Force path to be posixPath object
+    elif type(path) is not posixpath:
+      path = Path(path)
+    #
+    # If a file is supplied as path:
+    if path.is_file():
+      # An existing file is supplied.
+      # Check if file matches filter
+      if filter is not None:
+        if path.suffix in filter:
+          # An existing file is supplied that is verified
+          return self.getFile(path)
+        # Filter does not match, proceed with the parent directory of the file as path
+        if path.suffix not in filter:
+          self.debug('files:getRecentFileIn: ' + path.name + ' does not match filter ' + filter )
+          path = self.getPath(path.parent)
+    elif path.is_dir():
+      pass
+    else:
+      path = path.parent
+    #
+    # Proceed with default path, original supplied path or parent path of invalid file
+    if path.is_dir():
+      path = self.getPath(path)
+      self.debug('Files:getRecentFileIn: Getting most recent file in ' + str(path))
+      return self.getRecentFileInDirectory(path=path, filter=filter, recursive=recursive, method=method)
+    else:
+      # This should not occur, that warrants a notice
+      self.throw_notice('Files:getRecentFileIn: Unable to find file in ' + path.name + '.')
+      return None
+
+
+  def getRecentFileInDirectory(self, path=None, filter=None, recursive=False, method='modified'):
     # Normalize Path
     path = self.getPath(path)
     # Normalize method
@@ -78,24 +122,27 @@ class Files(Boilerplate):
     # Find the most recent file with filter in directory
     if method == 'c':
       try:
+        files = list(path.glob(filter))
+        for file in files:
+          if not file.is_file():
+            files.remove(file)
         return max(
-          list(path.glob(filter)),
+          files,
           key=os.path.getctime # Use getctime for recentlt created, getmtime for recently modified
         )
       except ValueError:
         return None
     else:
       try:
+        files = list(path.glob(filter))
+        for file in files:
+          if not file.is_file():
+            files.remove(file)
         return max(
-          list(path.glob(filter)),
+          files,
           key=os.path.getmtime # Use getctime for recentlt created, getmtime for recently modified
         )
       except ValueError:
         return None
 
-  def fileExists(self, file):
-    pass
-
-  def pathExists(self, path):
-    path = self.getPath(path)
-    return True if path.exists() else False
+  
