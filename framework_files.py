@@ -55,6 +55,32 @@ class Files(Boilerplate):
       return None
     return file
   
+  def getType(self, path):
+    if type(path) is not posixpath:
+      path = Path(path)
+    # Iterate over types
+    if path.is_dir():
+      return 'dir'
+    elif path.is_file():
+      return 'file'
+    elif path.is_absolute():
+      return 'absolute'
+    elif path.is_block_device():
+      return 'block_device'
+    elif path.is_char_device():
+      return 'char_device'
+    elif path.is_fifo():
+      return 'fifo'
+    elif path.is_mount():
+      return 'mount'
+    elif path.is_reserved():
+      return 'is_reserved'
+    elif path.is_socket():
+      return 'socket'
+    elif path.is_symlink():
+      return 'symlink'
+    else:
+      self.throw_error('Files.getType: Error when trying to determine file type of \'' + str(path) + '\'.')
 
   # getRecentFileIn()
   # @description    Retuns the most recent file in a directory.
