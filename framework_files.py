@@ -37,12 +37,20 @@ class Files(Boilerplate):
     else:
       # Return path as PosixPath
       path = path if type(path) is PosixPath else Path(path)
-      if path.is_file():
-        path = path.parent
+      
       if not path.is_absolute():
         path = Path.cwd() / path
     return path
-
+    
+  def getDir(self, path=None):
+    if path is None or path is False or len(str(path).strip()) == 0:
+      path = self.getPath()
+    elif type(path) is not posixpath:
+      path = self.getPath(path)
+    if path.is_file():
+        path = path.parent
+    return path
+    
   def getFile(self, file=None, exists=False):
     if file == None or file == '':
       self.throw_error(['Files.getFile: Error when converting filename to file in path-object in files:getFile(). No filename supplied.'])
