@@ -123,7 +123,8 @@ class CommonBoilerplate:
     return self.framework.files.getRecentFileIn(path=path, filter=filter, recursive=recursive, method=method)
   def getRecentFileInDirectory(self, path=None, filter=None, recursive=False, method='modified'):
     return self.framework.files.getRecentFileInDirectory(path=path, filter=filter, recursive=recursive, method=method)
-
+  def suggestFilename(self, suggestion=None, path=None, suffix=None, with_date=False, unique=False):
+    return self.framework.files.suggestFilename(suggestion=suggestion, path=path, suffix=suffix, with_date=with_date, unique=unique)
   ##  Date and time functions
   #   Shortcut to functions in framework_date
   ### getDate()
