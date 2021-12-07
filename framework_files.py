@@ -57,9 +57,10 @@ class Files(Boilerplate):
   
 
   # getRecentFileIn()
-  # Returns suggestion if file exists
-  # 
-  # 
+  # @description    Retuns the most recent file in a directory.
+  #                 If a file is passed as path and the file exists, it is assumed this file is meant
+  #                 If a file is passed as path and the file does not exist, the most recent file in
+  #                 the parent directory is returned.
   def getRecentFileIn(self, path=None,
                             filter=None, recursive=False, method='modified'):
     # Normalize Path
@@ -145,4 +146,59 @@ class Files(Boilerplate):
       except ValueError:
         return None
 
-  
+  # Takes a path and a filename
+  # 
+  def suggestFilename(self, suggestion=None, path=None, suffix=None, with_date=False, unique=False):
+    # Make sure path is posixpath
+    if path is None or path is False or len(str(path).strip()) == 0:
+      path = self.getPath()
+    elif type(path) is not posixpath:
+      path = Path(path)
+    # If the path has a suffix, assume a file suggestion
+    if len(path.suffixes) > 0:
+      self.debug('File.suggestFilename: Filename \'' + path.name + '\'detected in path. Moving filename to suggested filename.')
+      if suggestion is None:
+        suggestion = path.name
+      path = path.parent
+    # Make sure the path we have now is a full path
+    path = self.getPath(path)
+    # Make sure suggestion is posixpath, so we can use pathlib logic
+    if suggestion is None or len(str(suggestion)) == 0:
+      suggestion = Path(self.framework.getAppName())
+    elif type(suggestion) is not posixpath:
+      suggestion = Path(suggestion)
+    # Check if suffix filter needs to be applied
+    if suffix is not None:
+      report = []
+      # If a singlen suffix is supplied, check for single suffix
+      if type(suffix) == str and suggestion.suffix != suffix:
+        report.append(' '*22 + 'Forcing suffix: Got \'' + suggestion.suffix + '\', expected \'' + suffix + '\'.')
+        suggestion = Path(suggestion.stem)
+      # If a list of suffixes is supplied, check for multiple suffixes
+      elif type(suffix) == list and suggestion.suffixes != suffix:
+        report.append(' '*22 + 'Forcing suffix: Got \'' + ''.join(suggestion.suffixes) + '\', expected \'' + ''.join(suffix) + '\'.')
+        suggestion = Path(suggestion.stem)
+      # If at this time the suggestion does not have a suffix, add it.
+      if len(suggestion.suffixes) == 0:
+        if len(report) > 0:
+          self.debug(['File.suggestFilename: Changing suffix of \'' + suggestion.stem + '\' to \'' + ''.join(suffix) + '\'.'] + report)
+        suggestion = suggestion.with_suffix(''.join(suffix))
+    # Check to use date
+    if with_date is True:
+      suggestion = suggestion.with_name(self.getDate() + '-' + suggestion.name)
+    #
+    # Check if filename should be unique
+    if unique is True:
+      try_file = path / suggestion
+      if try_file.is_file():
+        self.debug(['File.suggestFilename: Suggested file \'' + suggestion.name + '\' already exists but should be unique.',
+                    ' '*22 + 'Looking for a free followup number for the file.'])
+        # See if we can find a file that does not yet exist
+        number = 1
+        while try_file.with_name(suggestion.stem + '-' + str(number)).with_suffix(''.join(suggestion.suffixes)).is_file():
+          number += 1
+        suggestion = suggestion.with_name(suggestion.stem + '-' + str(number)).with_suffix(''.join(suggestion.suffixes))
+    # Build suggestion path
+    suggestion = path / suggestion
+    return suggestion
+    
