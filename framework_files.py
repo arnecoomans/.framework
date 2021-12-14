@@ -37,12 +37,20 @@ class Files(Boilerplate):
     else:
       # Return path as PosixPath
       path = path if type(path) is PosixPath else Path(path)
-      if path.is_file():
-        path = path.parent
+      
       if not path.is_absolute():
         path = Path.cwd() / path
     return path
-
+    
+  def getDir(self, path=None):
+    if path is None or path is False or len(str(path).strip()) == 0:
+      path = self.getPath()
+    elif type(path) is not posixpath:
+      path = self.getPath(path)
+    if path.is_file():
+        path = path.parent
+    return path
+    
   def getFile(self, file=None, exists=False):
     if file == None or file == '':
       self.throw_error(['Files.getFile: Error when converting filename to file in path-object in files:getFile(). No filename supplied.'])
@@ -55,6 +63,32 @@ class Files(Boilerplate):
       return None
     return file
   
+  def getType(self, path):
+    if type(path) is not posixpath:
+      path = Path(path)
+    # Iterate over types
+    if path.is_dir():
+      return 'dir'
+    elif path.is_file():
+      return 'file'
+    elif path.is_absolute():
+      return 'absolute'
+    elif path.is_block_device():
+      return 'block_device'
+    elif path.is_char_device():
+      return 'char_device'
+    elif path.is_fifo():
+      return 'fifo'
+    elif path.is_mount():
+      return 'mount'
+    elif path.is_reserved():
+      return 'is_reserved'
+    elif path.is_socket():
+      return 'socket'
+    elif path.is_symlink():
+      return 'symlink'
+    else:
+      self.throw_error('Files.getType: Error when trying to determine file type of \'' + str(path) + '\'.')
 
   # getRecentFileIn()
   # @description    Retuns the most recent file in a directory.

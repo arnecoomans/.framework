@@ -58,10 +58,10 @@ class AppBoilerplate(Boilerplate):
   #   @description   Presents the user with a question.
   #                  Presents suggestion if supplied, that is accepted with ease
   #                  If the question is answered via command-line arguments, the answer is used.
-  def ask(self, question, reference=None, suggestion=None):
+  def ask(self, question, reference=None, suggestion=None, default=None):
     # If the framework interact module is loaded, use it since it.
     if hasattr(self.framework, 'interact'):
-      return self.framework.interact.ask(question=question, reference=reference, suggestion=suggestion)
+      return self.framework.interact.ask(question=question, reference=reference, suggestion=suggestion, default=default)
     else:
       # If the framework interact module is not loaded, only display the basic question and pass back the answer
       return input(question)

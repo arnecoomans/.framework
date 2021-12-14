@@ -34,7 +34,12 @@ class Framework:
     self.config   = Config(self)
     self.interact = Interact(self)
     self.date     = Date(self)
-  
+
+    # Prepare configuration Containers
+    # Module Path
+    # defines the storage location of .framework modules
+    self.module_path = self.getCorePath().joinpath('modules/')
+
   def run(self):
     # Initialisation
     self.config.parseArgumentParser()
@@ -43,9 +48,11 @@ class Framework:
     
   ## Context management
   def getAppName(self):
+    # Get app name from sys.argv. Use Pathlib to return stem
     return self.files.getFile(sys.argv[0]).stem
   def getCorePath(self):
-    return self.files.getPath(os.path.dirname(os.path.abspath(__file__)))
+    # Get path of core files (where this file is located)
+    return self.files.getDir(os.path.dirname(os.path.abspath(__file__)))
   
   ## Module management
   ### getModule
@@ -75,23 +82,22 @@ class Framework:
   def loadModule(self, module):
     # Check if module is already loaded
     if self.isModule(module):
-      self.log.debug('Module ' + module + ' already loaded')
+      self.log.debug('Core.Module: Module ' + module + ' already loaded')
       return True
     else:
       # Verify that module exists
-      module_path = os.path.dirname(os.path.abspath(__file__)) + '/modules/'
-      module_file = 'module_' + module.lower()
-      if os.path.isfile(module_path + module_file + '.py'):
-        #print('Module ' + module + ' exists, loading')
-        imported_module = import_module(module_file)
-        module_class = getattr(imported_module, module)
-        self.modules[module] = module_class(self)
+      module_file = self.module_path.joinpath('module_' + module.lower()).with_suffix('.py')
+      if module_file.is_file():
+        imported_module = import_module(module_file.stem)
+        self.modules[module] = getattr(imported_module, module)(self)
         return True
       else:
         if hasattr(self, 'log'):
-          self.log.throw_error(['An error occured when trying to load module "' + module + '".', 
-                                'The module file "module_' + module + '" was not found', 
+          self.log.throw_error(['Core.Module: An error occured when trying to load module "' + module + '".', 
+                                'The module file "' + module_file.name  + '" was not found', 
                                 'or the class could not be loaded.'])
+
+  
   def listModules(self):
     return list(self.modules.keys())
         

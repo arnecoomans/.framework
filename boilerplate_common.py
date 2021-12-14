@@ -112,7 +112,7 @@ class CommonBoilerplate:
   #                  If input is a file, the path of the file is returned
   def getPath(self, path=None):
     return self.framework.files.getPath(path=path)
-  ### getRecentFile()
+  ### getRecentFileIn()
   #   @arguments     path [string|posixpath], filter [string], recursive [bool], method [string]
   #   @returns       posixpath object
   #   @description   Returns the most recently created or modified file in path.
@@ -125,6 +125,8 @@ class CommonBoilerplate:
     return self.framework.files.getRecentFileInDirectory(path=path, filter=filter, recursive=recursive, method=method)
   def suggestFilename(self, suggestion=None, path=None, suffix=None, with_date=False, unique=False):
     return self.framework.files.suggestFilename(suggestion=suggestion, path=path, suffix=suffix, with_date=with_date, unique=unique)
+  def getFiles(self):
+    return self.framework.files
   ##  Date and time functions
   #   Shortcut to functions in framework_date
   ### getDate()

@@ -113,16 +113,28 @@ class Logging(Boilerplate):
     return self.logfile
 
   def getTextualLevel(self, level):
-    if level == 1:
-      return ' ERROR '
-    elif level == 2:
-      return '       '
-    elif level == 3:
-      return 'WARNING'
-    elif level == 4:
-      return 'NOTICE '
+    if self.getArgument('coloured') == True:
+      if level == 1:
+        return "\033[91m" + ' ERROR ' + "\x1B[0m"
+      elif level == 2:
+        return '       '
+      elif level == 3:
+        return "\033[93m" + 'WARNING' + "\x1B[0m"
+      elif level == 4:
+        return "\033[94m" + 'NOTICE ' + "\x1B[0m"
+      else:
+        return "\033[94m" + ' DEBUG ' + "\x1B[0m"
     else:
-      return ' DEBUG '
+      if level == 1:
+        return ' ERROR '
+      elif level == 2:
+        return '       '
+      elif level == 3:
+        return 'WARNING'
+      elif level == 4:
+        return 'NOTICE '
+      else:
+        return ' DEBUG '
 
   ##  Log Buffer
   ### Add
@@ -254,7 +266,14 @@ class Logging(Boilerplate):
       print(pre + row)
       # Reset the prepend to empty space in the same width as the original content
       # This ensures that multiline messages are prepended only once.
-      pre = ' '*len(pre)
+      prelen = len(pre)
+      if self.getArgument('coloured'):
+        # Remove the number count for coloured text
+        # -5 for colour set
+        # -4 for reset
+        if pre != ' '*prelen:
+          prelen = prelen - 9
+      pre = ' '*prelen
   
   
     

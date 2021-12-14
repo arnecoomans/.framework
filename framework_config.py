@@ -155,6 +155,7 @@ class Config(Boilerplate):
                                       help='Automatically accept suggestions',
                                       action='store_true',
                                       default=False,
+                                      dest='force_accept_input',
                                       )
                                       
   
