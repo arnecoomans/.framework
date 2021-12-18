@@ -36,12 +36,27 @@ class Files(Boilerplate):
       return Path.cwd()
     else:
       # Return path as PosixPath
+      if type(path) is str:
+        path = Path(path)
+      # If by a freak accident the supplied path is a list or dict, 
+      # just take the first supplied and not make a big fuss about it
+      elif type(path) is list:
+        path = Path(path[0])
+      elif type(path) is dict:
+        path = Path(list(path.values())[0])
+      elif type(path) is not posixpath:
+        try:
+          path = Path(path)
+        except:
+          self.throw_error('Error when converting ' + str(path) + ' to path object.')
       path = path if type(path) is PosixPath else Path(path)
-      
+      #
       if not path.is_absolute():
         path = Path.cwd() / path
     return path
-    
+  
+  # getDir
+  # 
   def getDir(self, path=None):
     if path is None or path is False or len(str(path).strip()) == 0:
       path = self.getPath()
@@ -51,6 +66,8 @@ class Files(Boilerplate):
         path = path.parent
     return path
     
+  # getFile
+  #
   def getFile(self, file=None, exists=False):
     if file == None or file == '':
       self.throw_error(['Files.getFile: Error when converting filename to file in path-object in files:getFile(). No filename supplied.'])
@@ -63,6 +80,8 @@ class Files(Boilerplate):
       return None
     return file
   
+  # getType
+  # 
   def getType(self, path):
     if type(path) is not posixpath:
       path = Path(path)
