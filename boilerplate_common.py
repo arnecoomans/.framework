@@ -112,6 +112,8 @@ class CommonBoilerplate:
   #                  If input is a file, the path of the file is returned
   def getPath(self, path=None):
     return self.framework.files.getPath(path=path)
+  def getDir(self, path=None):
+    return self.framework.files.getDir(path=path)
   ### getRecentFileIn()
   #   @arguments     path [string|posixpath], filter [string], recursive [bool], method [string]
   #   @returns       posixpath object
